@@ -11,7 +11,10 @@
     "url": "git://github.com/thlorenz/sass-resolve.git"
   },
   "homepage": "https://github.com/thlorenz/sass-resolve",
-  "dependencies": {},
+  "dependencies": {
+    "resolve": "~0.5.1",
+    "asyncreduce": "~0.1.4"
+  },
   "devDependencies": {
     "tap": "~0.4.3"
   },
