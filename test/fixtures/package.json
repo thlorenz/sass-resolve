@@ -1,0 +1,12 @@
+{
+  "name": "main-project",
+  "version": "0.0.0",
+  "description": "The project which has it's own sass files and requires other libs with their own sass files.",
+  "main": "index.js",
+  "sass": "sass/index.scss",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD-2-Clause"
+}
