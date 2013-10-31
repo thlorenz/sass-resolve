@@ -1,0 +1,12 @@
+{
+  "name": "fixtures-broken",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "sass": "sass/index.scss",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD-2-Clause"
+}

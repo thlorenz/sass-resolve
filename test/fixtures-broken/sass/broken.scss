@@ -1,0 +1,6 @@
+// although we are assigning a var here, = is out of the question ;)
+$color = 'green';
+
+body {
+  color: $color;
+}
