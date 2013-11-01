@@ -12,7 +12,7 @@ var genImportsPath = path.join(tmpdir, 'sass-resolve-generated-imports.scss');
 
 /**
  * Resolves paths to all .scss files from the current package and its dependencies.
- * The location of these sass files is indicated in the "sass" field inside packags.json.
+ * The location of these sass files is indicated in the "main.scss" field inside packags.json.
  * It then generates the css file including all the rules found in the resolved .scss files.
  * Additionally it generates a .css.map file to enable sass source maps. 
  *
@@ -37,7 +37,7 @@ exports = module.exports = function (root, cssFile, cb) {
 
 /**
  * Resolves paths to all .scss files from the current package and its dependencies.
- * The location of these sass files is indicated in the "sass" field inside packags.json.
+ * The location of these sass files is indicated in the "main.scss" field inside packags.json.
  * 
  * @name resolveSassPaths
  * @function
@@ -64,17 +64,4 @@ var imports = exports.imports = function (root, cb) {
 
     cb(null, imports);
   });
-}
-
-// Test
-if (!module.parent) {
-  var cssFile = path.join(__dirname, 'test', 'fixtures', 'imports.css');
-  exports(
-      path.join(__dirname, 'test', 'fixtures')
-    , cssFile 
-    , function (err) {
-        if (err) return console.error(err);
-        var css = fs.readFileSync(cssFile, 'utf8');
-        console.log(css);
-      });
 }

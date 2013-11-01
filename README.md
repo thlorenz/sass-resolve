@@ -32,7 +32,7 @@ sassResolve(
 ```
 /**
  * Resolves paths to all .scss files from the current package and its dependencies.
- * The location of these sass files is indicated in the "sass" field inside packags.json.
+ * The location of these sass files is indicated in the "main.scss" field inside packags.json.
  * It then generates the css file including all the rules found in the resolved .scss files.
  * Additionally it generates a .css.map file to enable sass source maps. 
  *
@@ -51,7 +51,7 @@ sassResolve(
 ```
 /**
  * Resolves paths to all .scss files from the current package and its dependencies.
- * The location of these sass files is indicated in the "sass" field inside packags.json.
+ * The location of these sass files is indicated in the "main.scss" field inside packags.json.
  * 
  * @name resolveSassPaths
  * @function
