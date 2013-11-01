@@ -27,6 +27,33 @@ sassResolve(
 
 ## API
 
+### package.json
+
+In order for resolve-sass to be able to find your `.scss` files you need to specify an `.scss` entry file via the
+`main.scss` field in the `package.json` of each project that has `.scss` files.  
+
+The entry `.scss` file should specify an `@import` for each `.scss` file you want to include.
+
+#### Example
+
+
+```json
+// package.json
+{
+  [..]
+  "main.scss": "sass/index.scss",
+  [..]
+}
+```
+
+```scss
+// sass/index.scss
+@import "foo";
+@import "bar";
+```
+
+Please investigate these [fixtures](https://github.com/thlorenz/sass-resolve/tree/master/test/fixtures) for more information.
+
 ### **sassResolve(root, cssFile, cb)**
 
 ```
