@@ -13,7 +13,8 @@
   "homepage": "https://github.com/thlorenz/sass-resolve",
   "dependencies": {
     "resolve": "~0.5.1",
-    "asyncreduce": "~0.1.4"
+    "asyncreduce": "~0.1.4",
+    "convert-source-map": "~0.3.1"
   },
   "devDependencies": {
     "tap": "~0.4.3"
