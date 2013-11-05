@@ -1,0 +1,6 @@
+{
+"version": "3",
+"mappings": "AAEA,SAAU;EACR,KAAK,EAHS,OAAI;;ACEpB,MAAO;EACL,UAAU,EAHM,OAAI;;ACCtB,EAAG;EACD,KAAK,EAFC,QAAQ;;ACGhB,OAAQ;EACN,SAAS,EAJD,IAAI;;AAOd,OAAQ;EACN,SAAS,EAPD,IAAI;;ACCd,MAAO;EACL,KAAK,EAHW,OAAI;;ACAtB,YAAa;EACX,OAAO,EAAE,KAAK",
+"sources": ["../fixtures/node_modules/foo/sass/body.scss","../fixtures/node_modules/foo/sass/paragraph.scss","../fixtures/node_modules/foo/node_modules/fooz/sass/main.scss","../fixtures/node_modules/bar/node_modules/baz/sass/headers.scss","../fixtures/node_modules/bar/node_modules/baz/sass/paragraph.scss","../fixtures/sass/main.scss"],
+"file": "sample.css"
+}
