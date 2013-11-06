@@ -7,4 +7,5 @@
   , "expr"      :  true
   , "strict"    :  false
   , "validthis" :  true
+  , "asi"       :  true
 }

@@ -5,10 +5,13 @@ var resolveSassPaths =  require('./lib/resolve-sass-paths')
  , os                =  require('os')
  , path              =  require('path')
  , fs                =  require('fs')
+ , xtend             =  require('xtend')
  ;
 
 var tmpdir = os.tmpDir();
 var genImportsPath = path.join(tmpdir, 'sass-resolve-generated-imports.scss');
+
+var defaultOpts = { debug: true, inlineSourceContents: true, inlineSourceMap: true };
 
 /**
  * Resolves paths to all .scss files from the current package and its dependencies.
@@ -22,9 +25,19 @@ var genImportsPath = path.join(tmpdir, 'sass-resolve-generated-imports.scss');
  * @function
  * @param root {String} path to the current package
  * @param cssFile {String} path at which the resulting css file should be saved, the .css.map file is saved right next to it
+ * @param opts {Object} (optional) configure if and how source maps are created:
+ *  - debug (true) generate source maps
+ *  - inlineSourceContents (true) inline mapped (.scss) content instead of referring to original the files separately 
+ *  - inlineSourceMap (true) inline entire source map info into the .css file  instead of referring to an external .scss.map file
  * @param cb {Function} called back with an error or null when the css file was successfully generated.
  */
-exports = module.exports = function (root, cssFile, cb) {
+exports = module.exports = function (root, cssFile, opts, cb) {
+  if (typeof opts === 'function') {
+    cb = opts;
+    opts = {};
+  }
+  opts = xtend(defaultOpts, opts);
+
   imports(root, function (err, src) {
     if (err) return cb(err);
     // the imports contain absolute paths, so it doesn't matter where the import file ends up
