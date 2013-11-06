@@ -1,0 +1,22 @@
+.foo body {
+  color: #333333; }
+
+.foo p {
+  background: #333333; }
+
+h5 {
+  color: "yellow"; }
+
+.baz h1 {
+  font-size: 24px; }
+
+.baz h2 {
+  font-size: 16px; }
+
+.baz p {
+  color: #ddffdd; }
+
+.parent-main {
+  display: block; }
+
+/*# sourceMappingURL=sample-inlined.css.map */
