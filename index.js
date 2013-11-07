@@ -64,7 +64,8 @@ function persistMap(cssFile, conv, inlineSourceMap, nowrite, cb) {
  *  - inlineSourcesContent (true) inline mapped (.scss) content instead of referring to original the files separately 
  *  - inlineSourceMap (true) inline entire source map info into the .css file  instead of referring to an external .scss.map file
  *  - nowrite (false) if true the css will be included as the result and the css file will not be rewritten in case changes are applied
- * @param cb {Function} called back with an error or null when the css file was successfully generated.
+ * @param cb {Function} function (err[, css]) {}, called when all scss files have been transpiled, when nowrite is true,
+ * the generated css is included in the response, otherwise all data is written to the css file
  */
 exports = module.exports = function (root, cssFile, opts, cb) {
   if (typeof opts === 'function') {

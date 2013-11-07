@@ -69,9 +69,33 @@ Please investigate these [fixtures](https://github.com/thlorenz/sass-resolve/tre
  * @function
  * @param root {String} path to the current package
  * @param cssFile {String} path at which the resulting css file should be saved, the .css.map file is saved right next to it
- * @param cb {Function} called back with an error or null when the css file was successfully generated.
+ * @param opts {Object} (optional) configure if and how source maps are created:
+ *  - debug (true) generate source maps
+ *  - inlineSourcesContent (true) inline mapped (.scss) content instead of referring to original the files separately 
+ *  - inlineSourceMap (true) inline entire source map info into the .css file  instead of referring to an external .scss.map file
+ *  - nowrite (false) if true the css will be included as the result and the css file will not be rewritten in case changes are applied
+ * @param cb {Function} function (err[, css]) {}, called when all scss files have been transpiled, when nowrite is true,
+ * the generated css is included in the response, otherwise all data is written to the css file
  */
 ```
+
+To get a better understanding of what options to set, please consult [these
+tests](https://github.com/thlorenz/sass-resolve/blob/master/test/sass-resolve.js).
+
+Here are a few examples:
+
+##### `debug: true, inlineSourcesContent: true, inlineSourceMap: false, nowrite: false`
+
+Will generate source maps and inline the sources of all original files.
+
+These source maps are saved into the `.css.map` file and no css is returned.
+
+##### `debug: true, inlineSourcesContent: false, inlineSourceMap: true, nowrite: true`
+
+Will generate source maps, but not inline the sources of original files. However instead of referring to an external
+`.css.map` file, all source map data is added to the bottom of the css. Since `nowrite` is desired, that update is not
+written to the generated `.css` file. The css with added source maps is returned.
+
 
 ### **sassResolve.paths(root, cb)**
 
