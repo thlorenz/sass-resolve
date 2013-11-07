@@ -6,12 +6,18 @@ var resolveSassPaths =  require('./lib/resolve-sass-paths')
  , path              =  require('path')
  , fs                =  require('fs')
  , xtend             =  require('xtend')
+ , deserialize       =  require('./lib/deserialize-mapfile')
+ , resolveSources    =  require('./lib/resolve-scss-sources')
  ;
 
 var tmpdir = os.tmpDir();
 var genImportsPath = path.join(tmpdir, 'sass-resolve-generated-imports.scss');
 
-var defaultOpts = { debug: true, inlineSourceContents: true, inlineSourceMap: true };
+var defaultOpts = { debug: true, inlineSourcesContent: true, inlineSourceMap: true };
+
+function persistMap(cssFile, conv, inline, cb) {
+  fs.writeFile(cssFile + '.map', conv.toJSON(2), 'utf8', cb);
+}
 
 /**
  * Resolves paths to all .scss files from the current package and its dependencies.
@@ -27,7 +33,7 @@ var defaultOpts = { debug: true, inlineSourceContents: true, inlineSourceMap: tr
  * @param cssFile {String} path at which the resulting css file should be saved, the .css.map file is saved right next to it
  * @param opts {Object} (optional) configure if and how source maps are created:
  *  - debug (true) generate source maps
- *  - inlineSourceContents (true) inline mapped (.scss) content instead of referring to original the files separately 
+ *  - inlineSourcesContent (true) inline mapped (.scss) content instead of referring to original the files separately 
  *  - inlineSourceMap (true) inline entire source map info into the .css file  instead of referring to an external .scss.map file
  * @param cb {Function} called back with an error or null when the css file was successfully generated.
  */
@@ -41,9 +47,21 @@ exports = module.exports = function (root, cssFile, opts, cb) {
   function adaptMap(err) {
     if (err) return cb(err);
     if (!opts.debug) return cb();
-    if (!opts.inlineSourcesContent || !opts.inlineSourceMap) return cb();
+    if (!opts.inlineSourcesContent && !opts.inlineSourceMap) return cb();
 
-    
+    deserialize(cssFile, function (err, conv) {
+      if (err) return cb(err);
+      if (opts.inlineSourcesContent) {
+        // resolving sources will add them as 'sourcesContent' to conv
+        resolveSources(cssFile, conv, function (err) {
+          if (err) return cb(err);
+          persistMap(cssFile, conv, opts.inlineSourceMap, cb);
+        })
+      } else {
+        persistMap(cssFile, conv, opts.inlineSourceMap, cb);
+      }
+    })
+
   }
   
   imports(root, function (err, src) {
