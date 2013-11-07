@@ -54,7 +54,7 @@ The entry `.scss` file should specify an `@import` for each `.scss` file you wan
 
 Please investigate these [fixtures](https://github.com/thlorenz/sass-resolve/tree/master/test/fixtures) for more information.
 
-### **sassResolve(root, cssFile, cb)**
+### **sassResolve(root, cssFile[, opts], cb)**
 
 ```
 /**
