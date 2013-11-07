@@ -16,8 +16,15 @@ var genImportsPath = path.join(tmpdir, 'sass-resolve-generated-imports.scss');
 
 var defaultOpts = { debug: true, inlineSourcesContent: true, inlineSourceMap: true, nowrite: false };
 
-function persistMap(cssFile, conv, inline, nowrite, cb) {
-  if (!inline) return fs.writeFile(cssFile + '.map', conv.toJSON(2), 'utf8', cb);
+function persistMap(cssFile, conv, inlineSourceMap, nowrite, cb) {
+  if (!inlineSourceMap) { 
+    fs.writeFile(cssFile + '.map', conv.toJSON(2), 'utf8', function (err) {
+      if (err) return cb(err);
+      if (!nowrite) return cb();
+      fs.readFile(cssFile, 'utf8', cb);
+    });
+    return;
+  }
 
   // In case we are supposed to inline the source map, we do the following
   // - remove source map pointing to map file
@@ -34,7 +41,7 @@ function persistMap(cssFile, conv, inline, nowrite, cb) {
     if (nowrite) return cb(null, css);
     fs.writeFile(cssFile, css, 'utf8', function (err) {
       if (err) return cb(err);
-      cb(null, css);  
+      cb(null, nowrite ? css : null);  
     });  
   }
 
@@ -56,7 +63,7 @@ function persistMap(cssFile, conv, inline, nowrite, cb) {
  *  - debug (true) generate source maps
  *  - inlineSourcesContent (true) inline mapped (.scss) content instead of referring to original the files separately 
  *  - inlineSourceMap (true) inline entire source map info into the .css file  instead of referring to an external .scss.map file
- *  - nowrite (false) if true the css will be included as the result and the css file will not be written in case changes are applied
+ *  - nowrite (false) if true the css will be included as the result and the css file will not be rewritten in case changes are applied
  * @param cb {Function} called back with an error or null when the css file was successfully generated.
  */
 exports = module.exports = function (root, cssFile, opts, cb) {
@@ -66,10 +73,15 @@ exports = module.exports = function (root, cssFile, opts, cb) {
   }
   opts = xtend(defaultOpts, opts);
 
+  function noadapt() {
+    if (!opts.nowrite) return cb();
+    fs.readFile(cssFile, 'utf8', cb);
+  }
+
   function adaptMap(err) {
     if (err) return cb(err);
-    if (!opts.debug) return cb();
-    if (!opts.inlineSourcesContent && !opts.inlineSourceMap) return cb();
+    if (!opts.debug) return noadapt();
+    if (!opts.inlineSourcesContent && !opts.inlineSourceMap) return noadapt();
 
     deserialize(cssFile, function (err, conv) {
       if (err) return cb(err);
