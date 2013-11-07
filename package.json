@@ -4,7 +4,7 @@
   "description": "Resolves all sass files in current project and all dependencies to create on sourcemapped css file fromt them.",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "echo 'NOTE: some tests require scss>=3.3.0 to be installed on your machine' && tap test/*.js"
   },
   "repository": {
     "type": "git",
