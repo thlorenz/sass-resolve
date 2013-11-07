@@ -38,12 +38,20 @@ exports = module.exports = function (root, cssFile, opts, cb) {
   }
   opts = xtend(defaultOpts, opts);
 
+  function adaptMap(err) {
+    if (err) return cb(err);
+    if (!opts.debug) return cb();
+    if (!opts.inlineSourcesContent || !opts.inlineSourceMap) return cb();
+
+    
+  }
+  
   imports(root, function (err, src) {
     if (err) return cb(err);
     // the imports contain absolute paths, so it doesn't matter where the import file ends up
     fs.writeFile(genImportsPath, src, 'utf8', function (err) {
       if (err) return cb(err);
-      scss(genImportsPath, cssFile, opts.debug, cb);
+      scss(genImportsPath, cssFile, opts.debug, adaptMap);
     });
   });  
 }
