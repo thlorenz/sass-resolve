@@ -8,15 +8,36 @@ var resolveSassPaths =  require('./lib/resolve-sass-paths')
  , xtend             =  require('xtend')
  , deserialize       =  require('./lib/deserialize-mapfile')
  , resolveSources    =  require('./lib/resolve-scss-sources')
+ , convertSourceMap  =  require('convert-source-map')
  ;
 
 var tmpdir = os.tmpDir();
 var genImportsPath = path.join(tmpdir, 'sass-resolve-generated-imports.scss');
 
-var defaultOpts = { debug: true, inlineSourcesContent: true, inlineSourceMap: true };
+var defaultOpts = { debug: true, inlineSourcesContent: true, inlineSourceMap: true, nowrite: false };
 
-function persistMap(cssFile, conv, inline, cb) {
-  fs.writeFile(cssFile + '.map', conv.toJSON(2), 'utf8', cb);
+function persistMap(cssFile, conv, inline, nowrite, cb) {
+  if (!inline) return fs.writeFile(cssFile + '.map', conv.toJSON(2), 'utf8', cb);
+
+  // In case we are supposed to inline the source map, we do the following
+  // - remove source map pointing to map file
+  // - add the sourcemap with all information inlined to the bottom of the content
+  // - overwrite the original .css file with the content (unless nowrite was set)
+  fs.readFile(cssFile, 'utf8', adaptCss);
+
+  function adaptCss(err, css) {
+    if (err) return cb(err);
+
+    css = convertSourceMap.removeMapFileComments(css); 
+    css += '\n' + conv.toComment();
+
+    if (nowrite) return cb(null, css);
+    fs.writeFile(cssFile, css, 'utf8', function (err) {
+      if (err) return cb(err);
+      cb(null, css);  
+    });  
+  }
+
 }
 
 /**
@@ -35,6 +56,7 @@ function persistMap(cssFile, conv, inline, cb) {
  *  - debug (true) generate source maps
  *  - inlineSourcesContent (true) inline mapped (.scss) content instead of referring to original the files separately 
  *  - inlineSourceMap (true) inline entire source map info into the .css file  instead of referring to an external .scss.map file
+ *  - nowrite (false) if true the css will be included as the result and the css file will not be written in case changes are applied
  * @param cb {Function} called back with an error or null when the css file was successfully generated.
  */
 exports = module.exports = function (root, cssFile, opts, cb) {
@@ -55,10 +77,10 @@ exports = module.exports = function (root, cssFile, opts, cb) {
         // resolving sources will add them as 'sourcesContent' to conv
         resolveSources(cssFile, conv, function (err) {
           if (err) return cb(err);
-          persistMap(cssFile, conv, opts.inlineSourceMap, cb);
+          persistMap(cssFile, conv, opts.inlineSourceMap, opts.nowrite, cb);
         })
       } else {
-        persistMap(cssFile, conv, opts.inlineSourceMap, cb);
+        persistMap(cssFile, conv, opts.inlineSourceMap, opts.nowrite, cb);
       }
     })
 
