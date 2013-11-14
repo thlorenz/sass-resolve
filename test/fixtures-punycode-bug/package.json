@@ -1,0 +1,43 @@
+{
+  "name": "appup",
+  "version": "0.0.8",
+  "description": "CLI to launch apps that use an express main server and an optional restif api server.",
+  "main": "index.js",
+  "main.scss": "sass/index.scss",
+  "bin": {
+    "appup": "./bin/appup.js"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/thlorenz/appup.git"
+  },
+  "homepage": "https://github.com/thlorenz/appup",
+  "dependencies": {
+    "browserify": "~2.34.3"
+   },
+  "devDependencies": {
+  },
+  "keywords": [],
+  "author": {
+    "name": "Thorsten Lorenz",
+    "email": "thlorenz@gmx.de",
+    "url": "http://thlorenz.com"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/thlorenz/appup/blob/master/LICENSE"
+  },
+  "engine": {
+    "node": ">=0.6"
+  },
+  "readme": "# appup\n\nCLI to launch apps that use an express main server and an optional restif api server.\n\n## Installation\n\n    npm install appup\n\n## CLI\n\n```\nappup [options] file\n\nOptions:\n  --pages   port to start pages server on\n  --api     port to start api server on\n  --config  point to a config file to override routes, etc. for the pages and api server\n  --dedupe  if set it will [dynamically dedupe](https://github.com/thlorenz/dynamic-dedupe) all modules as they are\n            being required to work around the fact that symlinks break `npm dedupe` \n```\n\n## API\n\n###*appup(opts)*\n\n```\n/**\n * Creates browserify bundle and starts up pages server and/or api server according to the supplied options.\n *\n * If no api port is given, the api server is not started up.\n * If no pages port is given, the pages server is not started up.\n * If neither port is given, an error is thrown.\n * \n * @name exports\n * @function\n * @param opts {Object} with the following properties\n *  - pages: port at which to start up pages server (optional)\n *  - api: port at which to start up api server (optional)\n *  - config: configuration provided to override browserify specific options and/or custom API/Pages servers init functions\n *  - entry: entry file to add to browserify\n *  - dedupe: turns on dynamic-dedupe\n */\n```\n\n### config\n\nThe config needs to provide either or all of the following properties on the module exports object:\n\n- **bundleOpts**: `{Object}` options passed to `browserify().bundle(options)`\n- **initBrowserify**: `{Function}` invoked with `browserify` that needs to return a browserify *instance* that can be\n  initialized according to our needs\n- **initPages** {Function} invoked with `(pagesApp, express, apiServerInfo)` where apiServerInfo is `{ address: {Object} }`\n- **postInitPages** {Function} invoked with `(pagesApp, pagesServer, express)` where `pagesServer` is the result of\n  `pagesApp.listen()`\n- **initApi** {Function} invoked with `(apiApp, restify)`\n- **postInitApi** {Function} invoked with `(apiApp, apiServer, restify)` where `apiServer` is the result of\n  `apiApp.listen()`\n- **emitter** {EventEmitter} used to emit `info` and `error` events, if not provided messages are logged to the console\n  instead\n\n#### Example config\n\n```js\n// Bundle options\nexports.bundleOpts = { debug: true, insertGlobals: false };\n\nexports.initBrowserify = function (browserify) {\n  return browserify().transform('hbsfy');\n};\n\n// Server options\n\n// Pages\nexports.initPages = function (pagesApp, express, apiServerInfo) {\n  pagesApp.use(core.renderViewMiddleware(viewPath, { title: 'core' }));\n};\n\nexports.postInitPages = function (pagesApp, pagesServer, express) {\n};\n\n// API \nexports.initApi = function (apiApp, restify) {\n};\n\nexports.postInitApi = function (apiApp, apiServer, restify) {\n};\n```\n\n## License\n\nMIT\n",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/thlorenz/appup/issues"
+  },
+  "_id": "appup@0.0.8",
+  "_from": "appup@0.0.8"
+}
