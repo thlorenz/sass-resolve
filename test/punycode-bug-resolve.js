@@ -19,8 +19,6 @@ test('\nresolving sass paths starting in the fixtures main directory', function 
     if (err) return console.error(err);
     var dirs = res.map(subdir);
 
-    inspect(res)
-
     t.equal(dirs.length, 1, 'resolves one scss file');
     [ '/sass/index.scss' ].forEach(function (dir) {
         t.ok(~dirs.indexOf(dir), 'resolves ' + dir)
