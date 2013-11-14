@@ -64,6 +64,7 @@ function persistMap(cssFile, conv, inlineSourceMap, nowrite, cb) {
  *  - inlineSourcesContent (true) inline mapped (.scss) content instead of referring to original the files separately 
  *  - inlineSourceMap (true) inline entire source map info into the .css file  instead of referring to an external .scss.map file
  *  - nowrite (false) if true the css will be included as the result and the css file will not be rewritten in case changes are applied
+ *  - imports (optional) allows overriding how imports are resolved (see: resolveScssFiles and importsFromScssFiles)
  * @param cb {Function} function (err[, css]) {}, called when all scss files have been transpiled, when nowrite is true,
  * the generated css is included in the response, otherwise all data is written to the css file
  */
@@ -99,7 +100,7 @@ exports = module.exports = function (root, cssFile, opts, cb) {
 
   }
   
-  imports(root, function (err, src) {
+  (opts.imports || imports)(root, function (err, src) {
     if (err) return cb(err);
     // the imports contain absolute paths, so it doesn't matter where the import file ends up
     fs.writeFile(genImportsPath, src, 'utf8', function (err) {
@@ -113,12 +114,12 @@ exports = module.exports = function (root, cssFile, opts, cb) {
  * Resolves paths to all .scss files from the current package and its dependencies.
  * The location of these sass files is indicated in the "main.scss" field inside packags.json.
  * 
- * @name resolveSassPaths
+ * @name resolveScssFiles
  * @function
- * @param root {String} full path to the project whose sass files to resolve
+ * @param root {String} full path to the project whose scss files to resolve
  * @param cb {Function} called back with a list of paths to .scss files or an error if one occurred
  */
-exports.paths = resolveSassPaths;
+exports.resolveScssFiles = resolveSassPaths;
 
 /**
  * Resolves all paths of all .scss files of this project and its dependencies and 
@@ -132,10 +133,22 @@ exports.paths = resolveSassPaths;
 var imports = exports.imports = function (root, cb) {
   resolveSassPaths(root, function (err, scssFiles) {
     if (err) return cb(err);
-    var imports = scssFiles.map(function (f) {
-      return '@import "' + f + '";';
-    }).join('\n');
-
+    var imports = scssFilesToImports(scssFiles);
     cb(null, imports);
   });
+}
+
+/**
+ * Creates a .scss import string from the previously resolved sass paths (see: resolveScssFiles)
+ * This function is called by `imports` and exposed as an advanced api if more manual tweaking is needed.
+ * 
+ * @name scssFilesToImports
+ * @function
+ * @param scssFiles {Array} paths to resolved `.scss` files
+ * @return {String} of @import statements for each `.scss` file
+ */
+var scssFilesToImports = exports.scssFilesToImports = function (scssFiles) {
+  return scssFiles.map(function (f) {
+    return '@import "' + f + '";';
+  }).join('\n');
 }
