@@ -15,7 +15,8 @@
     "resolve": "~0.5.1",
     "asyncreduce": "~0.1.4",
     "convert-source-map": "~0.3.1",
-    "xtend": "~2.1.1"
+    "xtend": "~2.1.1",
+    "node-sass": "^0.8.3"
   },
   "devDependencies": {
     "tap": "~0.4.3"

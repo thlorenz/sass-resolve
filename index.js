@@ -51,24 +51,22 @@ function persistMap(cssFile, conv, inlineSourceMap, nowrite, cb) {
  * Resolves paths to all .scss files from the current package and its dependencies.
  * The location of these sass files is indicated in the "main.scss" field inside packags.json.
  * It then generates the css file including all the rules found in the resolved .scss files.
- * Additionally it generates a .css.map file to enable sass source maps. 
+ * Additionally it generates a .css.map file to enable sass source maps if so desired.
  *
- * NOTE: at this point sass 3.3 is still not officially released, but required to get sourcemaps.
- * 
  * @name sassResolve
  * @function
- * @param root {String} path to the current package
- * @param cssFile {String} path at which the resulting css file should be saved, the .css.map file is saved right next to it
- * @param opts {Object} (optional) configure if and how source maps are created:
- *  - debug (true) generate source maps
- *  - inlineSourcesContent (true) inline mapped (.scss) content instead of referring to original the files separately 
- *  - inlineSourceMap (true) inline entire source map info into the .css file  instead of referring to an external .scss.map file
- *  - nowrite (false) if true the css will be included as the result and the css file will not be rewritten in case changes are applied
- *  - imports (optional) allows overriding how imports are resolved (see: resolveScssFiles and importsFromScssFiles)
+ * @param {string}    root                      path to the current package
+ * @param {Object=}   opts                      configure if and how source maps are created and if a css file is written
+ * @param {boolean=}  opts.debug                (default: true) generate source maps
+ * @param {boolean=}  opts.inlineSourcesContent (default: true) inline mapped (.scss) content instead of referring to original the files separately 
+ * @param {boolean=}  opts.inlineSourceMap      (default: true) inline entire source map info into the .css file  instead of referring to an external .scss.map file
+ * @param {boolean=}  opts.nowrite              (default: false) if true the css will be included as the result and the css file will not be rewritten in case changes are applied
+ * @param {function=} opts.imports              allows overriding how imports are resolved (see: resolveScssFiles and importsFromScssFiles)
+ * @param {string=}   opts.cssFile              path at which the resulting css file should be saved, the .css.map file is saved right next to it, if not supplied css not be written
  * @param cb {Function} function (err[, css]) {}, called when all scss files have been transpiled, when nowrite is true,
  * the generated css is included in the response, otherwise all data is written to the css file
  */
-exports = module.exports = function (root, cssFile, opts, cb) {
+exports = module.exports = function (root, opts, cb) {
   if (typeof opts === 'function') {
     cb = opts;
     opts = {};
@@ -77,24 +75,28 @@ exports = module.exports = function (root, cssFile, opts, cb) {
 
   function noadapt() {
     if (!opts.nowrite) return cb();
-    fs.readFile(cssFile, 'utf8', cb);
+    fs.readFile(opts.cssFile, 'utf8', cb);
   }
 
-  function adaptMap(err) {
+  function adaptMap(err, res) {
     if (err) return cb(err);
+    // TODO: stop gap to support step by step refactoring
+    fs.writeFileSync(opts.cssFile, res.css, 'utf8');
+    fs.writeFileSync(opts.cssFile + '.map', res.map, 'utf8');
+
     if (!opts.debug) return noadapt();
     if (!opts.inlineSourcesContent && !opts.inlineSourceMap) return noadapt();
 
-    deserialize(cssFile, function (err, conv) {
+    deserialize(opts.cssFile, function (err, conv) {
       if (err) return cb(err);
       if (opts.inlineSourcesContent) {
         // resolving sources will add them as 'sourcesContent' to conv
-        resolveSources(cssFile, conv, function (err) {
+        resolveSources(opts.cssFile, conv, function (err) {
           if (err) return cb(err);
-          persistMap(cssFile, conv, opts.inlineSourceMap, opts.nowrite, cb);
+          persistMap(opts.cssFile, conv, opts.inlineSourceMap, opts.nowrite, cb);
         })
       } else {
-        persistMap(cssFile, conv, opts.inlineSourceMap, opts.nowrite, cb);
+        persistMap(opts.cssFile, conv, opts.inlineSourceMap, opts.nowrite, cb);
       }
     })
 
@@ -105,7 +107,7 @@ exports = module.exports = function (root, cssFile, opts, cb) {
     // the imports contain absolute paths, so it doesn't matter where the import file ends up
     fs.writeFile(genImportsPath, src, 'utf8', function (err) {
       if (err) return cb(err);
-      scss(genImportsPath, cssFile, opts.debug, adaptMap);
+      scss(genImportsPath, opts.debug, adaptMap);
     });
   });  
 }
