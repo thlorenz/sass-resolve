@@ -27,16 +27,17 @@ sassResolve(
 
 ## Note
 
-Sourcemaps compatible with Chrome and Firefox only get generated properly with `sass v3.3+` and not at all with
-`libsass` at this point -- the latter is very sad :(.
+Sourcemaps compatible with Chrome and Firefox only get generated properly with `sass >= v3.3`.
 
 Therefore please do: 
 
-    [sudo] gem install sass -v '>=3.3.0alpha' --pre 
+    [sudo] gem install sass 
     
-if you want them (and you should).
+This version (`1`) of `sass-resolve` was tested against `sass 3.4`, to check your version do:
 
-To find out more please visit [this very informative post](https://medium.com/what-i-learned-building/b4daab987fb0).
+    ➝  sass --version
+    Sass 3.3.4 (Maptastic Maple)
+
 
 ## API
 

@@ -46,7 +46,7 @@ function mapFromFile() {
 }
 
 function lastLine(css) {
-  return css.split('\n').pop();
+  return css.split('\n').filter(function (x) { return x.trim().length }).pop();
 }
 
 function inspect(obj, depth) {
@@ -59,7 +59,8 @@ if (!process.env.TRAVIS) {
   test('\nwhen transpiling with debug flag off', function (t) {
     transpileNread({ debug: false }, function (err, css, retcss) {
       if (err) return t.fail(err)  
-      t.equal(lastLine(css), '', 'does not generate any sourcemaps')
+
+      t.ok(!/^\/\/#/.test(lastLine(css)), 'does not generate any sourcemaps')
       t.ok(!retcss, 'returns no css')
       t.end()
     })
@@ -99,8 +100,8 @@ if (!process.env.TRAVIS) {
       if (err) return t.fail(err)  
 
       t.equal(
-        lastLine(css)
-        , '//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjoiMyIsIm1hcHBpbmdzIjoiQUFFQSxTQUFVO0VBQ1IsS0FBSyxFQUhTLE9BQUk7O0FDRXBCLE1BQU87RUFDTCxVQUFVLEVBSE0sT0FBSTs7QUNDdEIsRUFBRztFQUNELEtBQUssRUFGQyxRQUFROztBQ0doQixPQUFRO0VBQ04sU0FBUyxFQUpELElBQUk7O0FBT2QsT0FBUTtFQUNOLFNBQVMsRUFQRCxJQUFJOztBQ0NkLE1BQU87RUFDTCxLQUFLLEVBSFcsT0FBSTs7QUNBdEIsWUFBYTtFQUNYLE9BQU8sRUFBRSxLQUFLIiwic291cmNlcyI6WyJub2RlX21vZHVsZXMvZm9vL3Nhc3MvYm9keS5zY3NzIiwibm9kZV9tb2R1bGVzL2Zvby9zYXNzL3BhcmFncmFwaC5zY3NzIiwibm9kZV9tb2R1bGVzL2Zvby9ub2RlX21vZHVsZXMvZm9vei9zYXNzL21haW4uc2NzcyIsIm5vZGVfbW9kdWxlcy9iYXIvbm9kZV9tb2R1bGVzL2Jhei9zYXNzL2hlYWRlcnMuc2NzcyIsIm5vZGVfbW9kdWxlcy9iYXIvbm9kZV9tb2R1bGVzL2Jhei9zYXNzL3BhcmFncmFwaC5zY3NzIiwic2Fzcy9tYWluLnNjc3MiXSwiZmlsZSI6InRyYW5zcGlsZWQuY3NzIn0='
+          lastLine(css)
+        , '//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6IkFBRUEsU0FBVTtFQUNSLEtBQUssRUFIUyxPQUFJOztBQ0VwQixNQUFPO0VBQ0wsVUFBVSxFQUhNLE9BQUk7O0FDQ3RCLEVBQUc7RUFDRCxLQUFLLEVBRkMsUUFBUTs7QUNHaEIsT0FBUTtFQUNOLFNBQVMsRUFKRCxJQUFJOztBQU9kLE9BQVE7RUFDTixTQUFTLEVBUEQsSUFBSTs7QUNDZCxNQUFPO0VBQ0wsS0FBSyxFQUhXLE9BQUk7O0FDQXRCLFlBQWE7RUFDWCxPQUFPLEVBQUUsS0FBSyIsInNvdXJjZXMiOlsibm9kZV9tb2R1bGVzL2Zvby9zYXNzL2JvZHkuc2NzcyIsIm5vZGVfbW9kdWxlcy9mb28vc2Fzcy9wYXJhZ3JhcGguc2NzcyIsIm5vZGVfbW9kdWxlcy9mb28vbm9kZV9tb2R1bGVzL2Zvb3ovc2Fzcy9tYWluLnNjc3MiLCJub2RlX21vZHVsZXMvYmFyL25vZGVfbW9kdWxlcy9iYXovc2Fzcy9oZWFkZXJzLnNjc3MiLCJub2RlX21vZHVsZXMvYmFyL25vZGVfbW9kdWxlcy9iYXovc2Fzcy9wYXJhZ3JhcGguc2NzcyIsInNhc3MvbWFpbi5zY3NzIl0sIm5hbWVzIjpbXSwiZmlsZSI6InRyYW5zcGlsZWQuY3NzIn0='
         , 'inlines sourcemap'
       )
       t.ok(!retcss, 'returns no css')
@@ -114,7 +115,7 @@ if (!process.env.TRAVIS) {
 
       t.equal(
         lastLine(css)
-        , '//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjoiMyIsIm1hcHBpbmdzIjoiQUFFQSxTQUFVO0VBQ1IsS0FBSyxFQUhTLE9BQUk7O0FDRXBCLE1BQU87RUFDTCxVQUFVLEVBSE0sT0FBSTs7QUNDdEIsRUFBRztFQUNELEtBQUssRUFGQyxRQUFROztBQ0doQixPQUFRO0VBQ04sU0FBUyxFQUpELElBQUk7O0FBT2QsT0FBUTtFQUNOLFNBQVMsRUFQRCxJQUFJOztBQ0NkLE1BQU87RUFDTCxLQUFLLEVBSFcsT0FBSTs7QUNBdEIsWUFBYTtFQUNYLE9BQU8sRUFBRSxLQUFLIiwic291cmNlcyI6WyJub2RlX21vZHVsZXMvZm9vL3Nhc3MvYm9keS5zY3NzIiwibm9kZV9tb2R1bGVzL2Zvby9zYXNzL3BhcmFncmFwaC5zY3NzIiwibm9kZV9tb2R1bGVzL2Zvby9ub2RlX21vZHVsZXMvZm9vei9zYXNzL21haW4uc2NzcyIsIm5vZGVfbW9kdWxlcy9iYXIvbm9kZV9tb2R1bGVzL2Jhei9zYXNzL2hlYWRlcnMuc2NzcyIsIm5vZGVfbW9kdWxlcy9iYXIvbm9kZV9tb2R1bGVzL2Jhei9zYXNzL3BhcmFncmFwaC5zY3NzIiwic2Fzcy9tYWluLnNjc3MiXSwiZmlsZSI6InRyYW5zcGlsZWQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiJHByaW1hcnktY29sb3I6ICMzMzM7XG5cbi5mb28gYm9keSB7XG4gIGNvbG9yOiAkcHJpbWFyeS1jb2xvcjtcbn1cbiIsIiRuaWNlLWJhY2stY29sb3I6ICMzMzM7XG5cbi5mb28gcCB7XG4gIGJhY2tncm91bmQ6ICRuaWNlLWJhY2stY29sb3I7XG59XG4iLCIkY29sb3I6ICd5ZWxsb3cnO1xuaDUge1xuICBjb2xvcjogJGNvbG9yO1xufVxuIiwiJGgxLWZvbnQ6IDI0cHg7IFxuJGgyLWZvbnQ6IDE2cHg7IFxuXG4uYmF6IGgxIHtcbiAgZm9udC1zaXplOiAkaDEtZm9udDtcbn1cblxuLmJheiBoMiB7XG4gIGZvbnQtc2l6ZTogJGgyLWZvbnQ7XG59XG4iLCIkbmljZS1mb3JlLWNvbG9yOiAjREZEO1xuXG4uYmF6IHAge1xuICBjb2xvcjogJG5pY2UtZm9yZS1jb2xvcjtcbn1cbiIsIi5wYXJlbnQtbWFpbiB7XG4gIGRpc3BsYXk6IGJsb2NrO1xufVxuIl19'
+        , '//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6IkFBRUEsU0FBVTtFQUNSLEtBQUssRUFIUyxPQUFJOztBQ0VwQixNQUFPO0VBQ0wsVUFBVSxFQUhNLE9BQUk7O0FDQ3RCLEVBQUc7RUFDRCxLQUFLLEVBRkMsUUFBUTs7QUNHaEIsT0FBUTtFQUNOLFNBQVMsRUFKRCxJQUFJOztBQU9kLE9BQVE7RUFDTixTQUFTLEVBUEQsSUFBSTs7QUNDZCxNQUFPO0VBQ0wsS0FBSyxFQUhXLE9BQUk7O0FDQXRCLFlBQWE7RUFDWCxPQUFPLEVBQUUsS0FBSyIsInNvdXJjZXMiOlsibm9kZV9tb2R1bGVzL2Zvby9zYXNzL2JvZHkuc2NzcyIsIm5vZGVfbW9kdWxlcy9mb28vc2Fzcy9wYXJhZ3JhcGguc2NzcyIsIm5vZGVfbW9kdWxlcy9mb28vbm9kZV9tb2R1bGVzL2Zvb3ovc2Fzcy9tYWluLnNjc3MiLCJub2RlX21vZHVsZXMvYmFyL25vZGVfbW9kdWxlcy9iYXovc2Fzcy9oZWFkZXJzLnNjc3MiLCJub2RlX21vZHVsZXMvYmFyL25vZGVfbW9kdWxlcy9iYXovc2Fzcy9wYXJhZ3JhcGguc2NzcyIsInNhc3MvbWFpbi5zY3NzIl0sIm5hbWVzIjpbXSwiZmlsZSI6InRyYW5zcGlsZWQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiJHByaW1hcnktY29sb3I6ICMzMzM7XG5cbi5mb28gYm9keSB7XG4gIGNvbG9yOiAkcHJpbWFyeS1jb2xvcjtcbn1cbiIsIiRuaWNlLWJhY2stY29sb3I6ICMzMzM7XG5cbi5mb28gcCB7XG4gIGJhY2tncm91bmQ6ICRuaWNlLWJhY2stY29sb3I7XG59XG4iLCIkY29sb3I6ICd5ZWxsb3cnO1xuaDUge1xuICBjb2xvcjogJGNvbG9yO1xufVxuIiwiJGgxLWZvbnQ6IDI0cHg7IFxuJGgyLWZvbnQ6IDE2cHg7IFxuXG4uYmF6IGgxIHtcbiAgZm9udC1zaXplOiAkaDEtZm9udDtcbn1cblxuLmJheiBoMiB7XG4gIGZvbnQtc2l6ZTogJGgyLWZvbnQ7XG59XG4iLCIkbmljZS1mb3JlLWNvbG9yOiAjREZEO1xuXG4uYmF6IHAge1xuICBjb2xvcjogJG5pY2UtZm9yZS1jb2xvcjtcbn1cbiIsIi5wYXJlbnQtbWFpbiB7XG4gIGRpc3BsYXk6IGJsb2NrO1xufVxuIl19'
         , 'inlines sourcemap including sources content'
       )
       t.ok(!retcss, 'returns no css')
@@ -126,7 +127,7 @@ if (!process.env.TRAVIS) {
   test('\nwhen transpiling with debug flag off, nowrite on', function (t) {
     transpileNread({ debug: false, nowrite: true }, function (err, css, retcss) {
       if (err) return t.fail(err)  
-      t.equal(lastLine(css), '', 'does not generate any sourcemaps')
+      t.ok(!/^\/\/#/.test(lastLine(css)), 'does not generate any sourcemaps')
       t.equal(retcss, css, 'returns css which is the same as is contained in css file')
       t.end()
     })
@@ -168,7 +169,7 @@ if (!process.env.TRAVIS) {
       t.equal(lastLine(css), '/*# sourceMappingURL=transpiled.css.map */', 'css in cssFile is not changed and still contains map pointing to map file')
       t.equal(
         lastLine(retcss)
-        , '//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjoiMyIsIm1hcHBpbmdzIjoiQUFFQSxTQUFVO0VBQ1IsS0FBSyxFQUhTLE9BQUk7O0FDRXBCLE1BQU87RUFDTCxVQUFVLEVBSE0sT0FBSTs7QUNDdEIsRUFBRztFQUNELEtBQUssRUFGQyxRQUFROztBQ0doQixPQUFRO0VBQ04sU0FBUyxFQUpELElBQUk7O0FBT2QsT0FBUTtFQUNOLFNBQVMsRUFQRCxJQUFJOztBQ0NkLE1BQU87RUFDTCxLQUFLLEVBSFcsT0FBSTs7QUNBdEIsWUFBYTtFQUNYLE9BQU8sRUFBRSxLQUFLIiwic291cmNlcyI6WyJub2RlX21vZHVsZXMvZm9vL3Nhc3MvYm9keS5zY3NzIiwibm9kZV9tb2R1bGVzL2Zvby9zYXNzL3BhcmFncmFwaC5zY3NzIiwibm9kZV9tb2R1bGVzL2Zvby9ub2RlX21vZHVsZXMvZm9vei9zYXNzL21haW4uc2NzcyIsIm5vZGVfbW9kdWxlcy9iYXIvbm9kZV9tb2R1bGVzL2Jhei9zYXNzL2hlYWRlcnMuc2NzcyIsIm5vZGVfbW9kdWxlcy9iYXIvbm9kZV9tb2R1bGVzL2Jhei9zYXNzL3BhcmFncmFwaC5zY3NzIiwic2Fzcy9tYWluLnNjc3MiXSwiZmlsZSI6InRyYW5zcGlsZWQuY3NzIn0='
+        , '//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6IkFBRUEsU0FBVTtFQUNSLEtBQUssRUFIUyxPQUFJOztBQ0VwQixNQUFPO0VBQ0wsVUFBVSxFQUhNLE9BQUk7O0FDQ3RCLEVBQUc7RUFDRCxLQUFLLEVBRkMsUUFBUTs7QUNHaEIsT0FBUTtFQUNOLFNBQVMsRUFKRCxJQUFJOztBQU9kLE9BQVE7RUFDTixTQUFTLEVBUEQsSUFBSTs7QUNDZCxNQUFPO0VBQ0wsS0FBSyxFQUhXLE9BQUk7O0FDQXRCLFlBQWE7RUFDWCxPQUFPLEVBQUUsS0FBSyIsInNvdXJjZXMiOlsibm9kZV9tb2R1bGVzL2Zvby9zYXNzL2JvZHkuc2NzcyIsIm5vZGVfbW9kdWxlcy9mb28vc2Fzcy9wYXJhZ3JhcGguc2NzcyIsIm5vZGVfbW9kdWxlcy9mb28vbm9kZV9tb2R1bGVzL2Zvb3ovc2Fzcy9tYWluLnNjc3MiLCJub2RlX21vZHVsZXMvYmFyL25vZGVfbW9kdWxlcy9iYXovc2Fzcy9oZWFkZXJzLnNjc3MiLCJub2RlX21vZHVsZXMvYmFyL25vZGVfbW9kdWxlcy9iYXovc2Fzcy9wYXJhZ3JhcGguc2NzcyIsInNhc3MvbWFpbi5zY3NzIl0sIm5hbWVzIjpbXSwiZmlsZSI6InRyYW5zcGlsZWQuY3NzIn0='
         , 'returned css contains inlined sourcemap'
       )
       t.end()
@@ -182,7 +183,7 @@ if (!process.env.TRAVIS) {
       t.equal(lastLine(css), '/*# sourceMappingURL=transpiled.css.map */', 'css in cssFile is not changed and still contains map pointing to map file')
       t.equal(
         lastLine(retcss)
-        , '//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjoiMyIsIm1hcHBpbmdzIjoiQUFFQSxTQUFVO0VBQ1IsS0FBSyxFQUhTLE9BQUk7O0FDRXBCLE1BQU87RUFDTCxVQUFVLEVBSE0sT0FBSTs7QUNDdEIsRUFBRztFQUNELEtBQUssRUFGQyxRQUFROztBQ0doQixPQUFRO0VBQ04sU0FBUyxFQUpELElBQUk7O0FBT2QsT0FBUTtFQUNOLFNBQVMsRUFQRCxJQUFJOztBQ0NkLE1BQU87RUFDTCxLQUFLLEVBSFcsT0FBSTs7QUNBdEIsWUFBYTtFQUNYLE9BQU8sRUFBRSxLQUFLIiwic291cmNlcyI6WyJub2RlX21vZHVsZXMvZm9vL3Nhc3MvYm9keS5zY3NzIiwibm9kZV9tb2R1bGVzL2Zvby9zYXNzL3BhcmFncmFwaC5zY3NzIiwibm9kZV9tb2R1bGVzL2Zvby9ub2RlX21vZHVsZXMvZm9vei9zYXNzL21haW4uc2NzcyIsIm5vZGVfbW9kdWxlcy9iYXIvbm9kZV9tb2R1bGVzL2Jhei9zYXNzL2hlYWRlcnMuc2NzcyIsIm5vZGVfbW9kdWxlcy9iYXIvbm9kZV9tb2R1bGVzL2Jhei9zYXNzL3BhcmFncmFwaC5zY3NzIiwic2Fzcy9tYWluLnNjc3MiXSwiZmlsZSI6InRyYW5zcGlsZWQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiJHByaW1hcnktY29sb3I6ICMzMzM7XG5cbi5mb28gYm9keSB7XG4gIGNvbG9yOiAkcHJpbWFyeS1jb2xvcjtcbn1cbiIsIiRuaWNlLWJhY2stY29sb3I6ICMzMzM7XG5cbi5mb28gcCB7XG4gIGJhY2tncm91bmQ6ICRuaWNlLWJhY2stY29sb3I7XG59XG4iLCIkY29sb3I6ICd5ZWxsb3cnO1xuaDUge1xuICBjb2xvcjogJGNvbG9yO1xufVxuIiwiJGgxLWZvbnQ6IDI0cHg7IFxuJGgyLWZvbnQ6IDE2cHg7IFxuXG4uYmF6IGgxIHtcbiAgZm9udC1zaXplOiAkaDEtZm9udDtcbn1cblxuLmJheiBoMiB7XG4gIGZvbnQtc2l6ZTogJGgyLWZvbnQ7XG59XG4iLCIkbmljZS1mb3JlLWNvbG9yOiAjREZEO1xuXG4uYmF6IHAge1xuICBjb2xvcjogJG5pY2UtZm9yZS1jb2xvcjtcbn1cbiIsIi5wYXJlbnQtbWFpbiB7XG4gIGRpc3BsYXk6IGJsb2NrO1xufVxuIl19'
+        , '//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6IkFBRUEsU0FBVTtFQUNSLEtBQUssRUFIUyxPQUFJOztBQ0VwQixNQUFPO0VBQ0wsVUFBVSxFQUhNLE9BQUk7O0FDQ3RCLEVBQUc7RUFDRCxLQUFLLEVBRkMsUUFBUTs7QUNHaEIsT0FBUTtFQUNOLFNBQVMsRUFKRCxJQUFJOztBQU9kLE9BQVE7RUFDTixTQUFTLEVBUEQsSUFBSTs7QUNDZCxNQUFPO0VBQ0wsS0FBSyxFQUhXLE9BQUk7O0FDQXRCLFlBQWE7RUFDWCxPQUFPLEVBQUUsS0FBSyIsInNvdXJjZXMiOlsibm9kZV9tb2R1bGVzL2Zvby9zYXNzL2JvZHkuc2NzcyIsIm5vZGVfbW9kdWxlcy9mb28vc2Fzcy9wYXJhZ3JhcGguc2NzcyIsIm5vZGVfbW9kdWxlcy9mb28vbm9kZV9tb2R1bGVzL2Zvb3ovc2Fzcy9tYWluLnNjc3MiLCJub2RlX21vZHVsZXMvYmFyL25vZGVfbW9kdWxlcy9iYXovc2Fzcy9oZWFkZXJzLnNjc3MiLCJub2RlX21vZHVsZXMvYmFyL25vZGVfbW9kdWxlcy9iYXovc2Fzcy9wYXJhZ3JhcGguc2NzcyIsInNhc3MvbWFpbi5zY3NzIl0sIm5hbWVzIjpbXSwiZmlsZSI6InRyYW5zcGlsZWQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiJHByaW1hcnktY29sb3I6ICMzMzM7XG5cbi5mb28gYm9keSB7XG4gIGNvbG9yOiAkcHJpbWFyeS1jb2xvcjtcbn1cbiIsIiRuaWNlLWJhY2stY29sb3I6ICMzMzM7XG5cbi5mb28gcCB7XG4gIGJhY2tncm91bmQ6ICRuaWNlLWJhY2stY29sb3I7XG59XG4iLCIkY29sb3I6ICd5ZWxsb3cnO1xuaDUge1xuICBjb2xvcjogJGNvbG9yO1xufVxuIiwiJGgxLWZvbnQ6IDI0cHg7IFxuJGgyLWZvbnQ6IDE2cHg7IFxuXG4uYmF6IGgxIHtcbiAgZm9udC1zaXplOiAkaDEtZm9udDtcbn1cblxuLmJheiBoMiB7XG4gIGZvbnQtc2l6ZTogJGgyLWZvbnQ7XG59XG4iLCIkbmljZS1mb3JlLWNvbG9yOiAjREZEO1xuXG4uYmF6IHAge1xuICBjb2xvcjogJG5pY2UtZm9yZS1jb2xvcjtcbn1cbiIsIi5wYXJlbnQtbWFpbiB7XG4gIGRpc3BsYXk6IGJsb2NrO1xufVxuIl19'
         , 'returned css contains inlined sourcemap including sources content'
       )
       t.end()
