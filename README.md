@@ -33,7 +33,7 @@ Therefore please do:
 
     [sudo] gem install sass 
     
-This version (`1`) of `sass-resolve` was tested against `sass 3.4`, to check your version do:
+This version (`sass-resolve v1`) of `sass-resolve` was tested against `sass 3.3.4`, to check your version do:
 
     ➝  sass --version
     Sass 3.3.4 (Maptastic Maple)
