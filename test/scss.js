@@ -1,8 +1,10 @@
 'use strict';
 /*jshint asi: true */
 
-var test = require('tap').test
-  , scss = require('../lib/scss')
+var test    = require('tap').test
+  , scss    = require('../lib/scss')
+
+var root = __dirname + '/..';
 
 var src = [
     '@import "' + __dirname + '/fixtures/node_modules/foo/sass/index.scss";'
@@ -63,12 +65,17 @@ var expectedCss = [
   '',
   '/*# sourceMappingURL=some.css.map */' ]
 
+var expectedInlineSourceMap = [ 
+  '',
+  '//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi8uLi92YXIvZm9sZGVycy83ai93MWx6YzFkczd6MWZ5aHc5eHNmbHFnY2MwMDAwZ24vVC9zYXNzLXJlc29sdmUtZ2VuZXJhdGVkLWltcG9ydHMuc2NzcyIsInRlc3QvZml4dHVyZXMvbm9kZV9tb2R1bGVzL2Zvby9zYXNzL2luZGV4LnNjc3MiLCJ0ZXN0L2ZpeHR1cmVzL25vZGVfbW9kdWxlcy9mb28vbm9kZV9tb2R1bGVzL2Zvb3ovc2Fzcy9pbmRleC5zY3NzIiwidGVzdC9maXh0dXJlcy9ub2RlX21vZHVsZXMvYmFyL25vZGVfbW9kdWxlcy9iYXovc2Fzcy9pbmRleC5zY3NzIiwidGVzdC9maXh0dXJlcy9zYXNzL2luZGV4LnNjc3MiLCJ0ZXN0L2ZpeHR1cmVzL25vZGVfbW9kdWxlcy9mb28vc2Fzcy9ib2R5LnNjc3MiLCJ0ZXN0L2ZpeHR1cmVzL25vZGVfbW9kdWxlcy9mb28vc2Fzcy9wYXJhZ3JhcGguc2NzcyIsInRlc3QvZml4dHVyZXMvbm9kZV9tb2R1bGVzL2Zvby9ub2RlX21vZHVsZXMvZm9vei9zYXNzL21haW4uc2NzcyIsInRlc3QvZml4dHVyZXMvbm9kZV9tb2R1bGVzL2Jhci9ub2RlX21vZHVsZXMvYmF6L3Nhc3MvaGVhZGVycy5zY3NzIiwidGVzdC9maXh0dXJlcy9ub2RlX21vZHVsZXMvYmFyL25vZGVfbW9kdWxlcy9iYXovc2Fzcy9wYXJhZ3JhcGguc2NzcyIsInRlc3QvZml4dHVyZXMvc2Fzcy9tYWluLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFLRUEsS0FBSztFQUNILE9BSGM7O0FDRWhCLEtBQUs7RUFDSCxZQUhnQjs7QUNDbEI7RUFDRSxPQUZNOztBQ0dSLEtBQUs7RUFDSCxXQUpROztBQU9WLEtBQUs7RUFDSCxXQVBROztBQ0NWLEtBQUs7RUFDSCxPQUhnQjs7QUNBbEI7RUFDRSxTQUFTIiwic291cmNlc0NvbnRlbnQiOlsiQGltcG9ydCBcIi9Vc2Vycy90aGxvcmVuei9kZXYvanMvcHJvamVjdHMvc2Fzcy1yZXNvbHZlL3Rlc3QvZml4dHVyZXMvbm9kZV9tb2R1bGVzL2Zvby9zYXNzL2luZGV4LnNjc3NcIjtcbkBpbXBvcnQgXCIvVXNlcnMvdGhsb3JlbnovZGV2L2pzL3Byb2plY3RzL3Nhc3MtcmVzb2x2ZS90ZXN0L2ZpeHR1cmVzL25vZGVfbW9kdWxlcy9mb28vbm9kZV9tb2R1bGVzL2Zvb3ovc2Fzcy9pbmRleC5zY3NzXCI7XG5AaW1wb3J0IFwiL1VzZXJzL3RobG9yZW56L2Rldi9qcy9wcm9qZWN0cy9zYXNzLXJlc29sdmUvdGVzdC9maXh0dXJlcy9ub2RlX21vZHVsZXMvYmFyL25vZGVfbW9kdWxlcy9iYXovc2Fzcy9pbmRleC5zY3NzXCI7XG5AaW1wb3J0IFwiL1VzZXJzL3RobG9yZW56L2Rldi9qcy9wcm9qZWN0cy9zYXNzLXJlc29sdmUvdGVzdC9maXh0dXJlcy9zYXNzL2luZGV4LnNjc3NcIjsiLCJAaW1wb3J0IFwiYm9keVwiO1xuQGltcG9ydCBcInBhcmFncmFwaFwiO1xuIiwiQGltcG9ydCBcIm1haW5cIjtcbiIsIkBpbXBvcnQgXCJoZWFkZXJzXCI7XG5AaW1wb3J0IFwicGFyYWdyYXBoXCI7XG4iLCJAaW1wb3J0IFwibWFpblwiO1xuIiwiJHByaW1hcnktY29sb3I6ICMzMzM7XG5cbi5mb28gYm9keSB7XG4gIGNvbG9yOiAkcHJpbWFyeS1jb2xvcjtcbn1cbiIsIiRuaWNlLWJhY2stY29sb3I6ICMzMzM7XG5cbi5mb28gcCB7XG4gIGJhY2tncm91bmQ6ICRuaWNlLWJhY2stY29sb3I7XG59XG4iLCIkY29sb3I6ICd5ZWxsb3cnO1xuaDUge1xuICBjb2xvcjogJGNvbG9yO1xufVxuIiwiJGgxLWZvbnQ6IDI0cHg7IFxuJGgyLWZvbnQ6IDE2cHg7IFxuXG4uYmF6IGgxIHtcbiAgZm9udC1zaXplOiAkaDEtZm9udDtcbn1cblxuLmJheiBoMiB7XG4gIGZvbnQtc2l6ZTogJGgyLWZvbnQ7XG59XG4iLCIkbmljZS1mb3JlLWNvbG9yOiAjREZEO1xuXG4uYmF6IHAge1xuICBjb2xvcjogJG5pY2UtZm9yZS1jb2xvcjtcbn1cbiIsIi5wYXJlbnQtbWFpbiB7XG4gIGRpc3BsYXk6IGJsb2NrO1xufVxuIl19'
+]
+
 function inspect(obj, depth) {
   console.error(require('util').inspect(obj, false, depth || 5, true));
 }
 
 test('\nsource maps turned on', function (t) {
-  scss(src, true, 'some.css.map', function (err, res) {
+  scss(src, true, root, 'some.css.map', function (err, res) {
     if (err) { t.fail(err); return t.end(); }
     var map = res.conv.toObject();
 
@@ -82,8 +89,19 @@ test('\nsource maps turned on', function (t) {
   })
 })
 
+test('\nsource maps turned on but no mapfile supplied', function (t) {
+  scss(src, true, root, null, function (err, res) {
+    if (err) { t.fail(err); return t.end(); }
+    t.ok(!res.conv, 'includes no external sourcemap')
+
+    t.deepEqual(res.css.split('\n'), expectedCss.slice(0, -1).concat(expectedInlineSourceMap), 'renders css with inlined sourcemap')
+
+    t.end()
+  })
+})
+
 test('\nsource maps turned off', function (t) {
-  scss(src, false, 'some.css.map', function (err, res) {
+  scss(src, false, root, 'some.css.map', function (err, res) {
     if (err) { t.fail(err); return t.end(); }
     t.deepEqual(res.css.split('\n'), expectedCss.slice(0, -1), 'renders css without sourcemapping url')
 
