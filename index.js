@@ -2,49 +2,16 @@
 
 var resolveSassPaths =  require('./lib/resolve-sass-paths')
  , scss              =  require('./lib/scss')
- , os                =  require('os')
  , path              =  require('path')
  , fs                =  require('fs')
  , xtend             =  require('xtend')
- , deserialize       =  require('./lib/deserialize-mapfile')
- , resolveSources    =  require('./lib/resolve-scss-sources')
  , convertSourceMap  =  require('convert-source-map')
  ;
 
-var tmpdir = os.tmpDir();
-var genImportsPath = path.join(tmpdir, 'sass-resolve-generated-imports.scss');
+var defaultOpts = { debug: true, inlineSourcesContent: true, inlineSourceMap: true };
 
-var defaultOpts = { debug: true, inlineSourcesContent: true, inlineSourceMap: true, nowrite: false };
-
-function persistMap(cssFile, conv, inlineSourceMap, nowrite, cb) {
-  if (!inlineSourceMap) { 
-    fs.writeFile(cssFile + '.map', conv.toJSON(2), 'utf8', function (err) {
-      if (err) return cb(err);
-      if (!nowrite) return cb();
-      fs.readFile(cssFile, 'utf8', cb);
-    });
-    return;
-  }
-
-  // In case we are supposed to inline the source map, we do the following
-  // - remove source map pointing to map file
-  // - add the sourcemap with all information inlined to the bottom of the content
-  // - overwrite the original .css file with the content (unless nowrite was set)
-  fs.readFile(cssFile, 'utf8', adaptCss);
-
-  function adaptCss(err, css) {
-    if (err) return cb(err);
-
-    css = convertSourceMap.removeMapFileComments(css); 
-    css += '\n' + conv.toComment();
-
-    if (nowrite) return cb(null, css);
-    fs.writeFile(cssFile, css, 'utf8', function (err) {
-      if (err) return cb(err);
-      cb(null, nowrite ? css : null);  
-    });  
-  }
-
+function inspect(obj, depth) {
+  console.error(require('util').inspect(obj, false, depth || 5, true));
 }
 
 /**
@@ -55,17 +22,21 @@ function persistMap(cssFile, conv, inlineSourceMap, nowrite, cb) {
  *
  * @name sassResolve
  * @function
- * @param {string}    root                      path to the current package
- * @param {Object=}   opts                      configure if and how source maps are created and if a css file is written
- * @param {boolean=}  opts.debug                (default: true) generate source maps
- * @param {boolean=}  opts.inlineSourcesContent (default: true) inline mapped (.scss) content instead of referring to original the files separately 
- * @param {boolean=}  opts.inlineSourceMap      (default: true) inline entire source map info into the .css file  instead of referring to an external .scss.map file
- * @param {boolean=}  opts.nowrite              (default: false) if true the css will be included as the result and the css file will not be rewritten in case changes are applied
- * @param {function=} opts.imports              allows overriding how imports are resolved (see: resolveScssFiles and importsFromScssFiles)
- * @param {string=}   opts.cssFile              path at which the resulting css file should be saved, the .css.map file is saved right next to it, if not supplied css not be written
- * @param cb {Function} function (err[, css]) {}, called when all scss files have been transpiled, when nowrite is true,
- * the generated css is included in the response, otherwise all data is written to the css file
- */
+ * @param {string}    root                  path to the current package
+ * @param {Object=}   opts                  configure if and how source maps are created and if a css file is written
+ * @param {boolean=}  opts.debug            (default: true) generate source maps
+ *
+ * @param {boolean=}  opts.inlineSourceMap  (default: true) inline entire source map info into the .css file
+ *                                          instead of referring to an external .scss.map file
+ *
+ * @param {function=} opts.imports          allows overriding how imports are resolved (see: resolveScssFiles and importsFromScssFiles)
+ *
+ * @param {string=}   opts.mapFileName      (default: 'transpiled.css.map') name of the source map file to be included 
+ *                                          at the bottom of the generated css (not relevant when source maps are inlined)
+ *
+ * @param cb {Function} function (err, res]) {}, called when all scss files have been transpiled, when nowrite is true,
+ *                                          res contains generated `css` and `map` (if sourcemaps were enabled and not inlined) 
+ **/
 exports = module.exports = function (root, opts, cb) {
   if (typeof opts === 'function') {
     cb = opts;
@@ -73,43 +44,15 @@ exports = module.exports = function (root, opts, cb) {
   }
   opts = xtend(defaultOpts, opts);
 
-  function noadapt() {
-    if (!opts.nowrite) return cb();
-    fs.readFile(opts.cssFile, 'utf8', cb);
-  }
+  var mapFileName = opts.inlineSourceMap ? null : opts.mapFileName || 'transpiled.css.map';
 
-  function adaptMap(err, res) {
-    if (err) return cb(err);
-    // TODO: stop gap to support step by step refactoring
-    fs.writeFileSync(opts.cssFile, res.css, 'utf8');
-    fs.writeFileSync(opts.cssFile + '.map', res.map, 'utf8');
-
-    if (!opts.debug) return noadapt();
-    if (!opts.inlineSourcesContent && !opts.inlineSourceMap) return noadapt();
-
-    deserialize(opts.cssFile, function (err, conv) {
-      if (err) return cb(err);
-      if (opts.inlineSourcesContent) {
-        // resolving sources will add them as 'sourcesContent' to conv
-        resolveSources(opts.cssFile, conv, function (err) {
-          if (err) return cb(err);
-          persistMap(opts.cssFile, conv, opts.inlineSourceMap, opts.nowrite, cb);
-        })
-      } else {
-        persistMap(opts.cssFile, conv, opts.inlineSourceMap, opts.nowrite, cb);
-      }
-    })
-
-  }
-  
   (opts.imports || imports)(root, function (err, src) {
     if (err) return cb(err);
-    // the imports contain absolute paths, so it doesn't matter where the import file ends up
-    fs.writeFile(genImportsPath, src, 'utf8', function (err) {
+    scss(src, opts.debug, root, mapFileName,  function (err, res) {
       if (err) return cb(err);
-      scss(genImportsPath, opts.debug, adaptMap);
-    });
-  });  
+      cb(null, { css: res.css, map: res.conv && res.conv.toObject() });      
+    })
+  })
 }
 
 /**

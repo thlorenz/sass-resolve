@@ -4,7 +4,7 @@
   "description": "Resolves all sass files in current project and all dependencies to create on sourcemapped css file fromt them.",
   "main": "index.js",
   "scripts": {
-    "test": "echo 'NOTE: some tests require scss>=3.3.0 to be installed on your machine' && tap test/*.js"
+    "test": "tap test/*.js"
   },
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
     "asyncreduce": "~0.1.4",
     "convert-source-map": "~0.3.1",
     "xtend": "~2.1.1",
-    "node-sass": "^0.8.3"
+    "node-sass": "~0.8.3"
   },
   "devDependencies": {
     "tap": "~0.4.3"

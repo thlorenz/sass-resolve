@@ -5,21 +5,30 @@ var test = require('tap').test
 var fs = require('fs')
 var path = require('path')
 var resolveSources = require('../lib/resolve-scss-sources')
-var deserialize = require('../lib/deserialize-mapfile')
+var convert =  require('convert-source-map')
 
-var cssFile = path.join(__dirname, 'css-with-sourcemaps', 'sample.css');
+var root = path.join(__dirname, 'css-with-sourcemaps');
+var cssFile = path.join(root, 'sample.css');
 
 function inspect(obj, depth) {
   console.error(require('util').inspect(obj, false, depth || 5, true));
 }
 
+function deserialize(cssFile, cb) {
+  fs.readFile(cssFile, 'utf8',  function (err, css) {
+    if (err) return cb(err);
+    var conv = convert.fromMapFileSource(css, root);
+    cb(null, conv)
+  });
+}
+
 test('\nwhen resolving a source map from a .css file whose sourcemap comment points at a valid .css.map file', function (t) {
   
   deserialize(cssFile, function (err, conv) {
-    if (err) return t.fail(err);
+    if (err) { t.fail(err); return t.end(); }
 
-    resolveSources(cssFile, conv, function (err) {
-      if (err) return t.fail(err);
+    resolveSources(root, conv, function (err) {
+      if (err) { t.fail(err); return t.end(); }
 
       t.deepEqual(
           conv.toObject().sources
