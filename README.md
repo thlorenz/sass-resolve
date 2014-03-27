@@ -187,9 +187,9 @@ res contains generated <code>css</code> and <code>map</code> (if sourcemaps were
 <dt class="tag-source">Source:</dt>
 <dd class="tag-source"><ul class="dummy">
 <li>
-<a href="https://github.com/thlorenz/sass-resolve/blob/libsass/index.js">index.js</a>
+<a href="https://github.com/thlorenz/sass-resolve/blob/master/index.js">index.js</a>
 <span>, </span>
-<a href="https://github.com/thlorenz/sass-resolve/blob/libsass/index.js#L17">lineno 17</a>
+<a href="https://github.com/thlorenz/sass-resolve/blob/master/index.js#L17">lineno 17</a>
 </li>
 </ul></dd>
 </dl>
@@ -232,9 +232,9 @@ generates the sass imports for them</p>
 <dt class="tag-source">Source:</dt>
 <dd class="tag-source"><ul class="dummy">
 <li>
-<a href="https://github.com/thlorenz/sass-resolve/blob/libsass/index.js">index.js</a>
+<a href="https://github.com/thlorenz/sass-resolve/blob/master/index.js">index.js</a>
 <span>, </span>
-<a href="https://github.com/thlorenz/sass-resolve/blob/libsass/index.js#L69">lineno 69</a>
+<a href="https://github.com/thlorenz/sass-resolve/blob/master/index.js#L69">lineno 69</a>
 </li>
 </ul></dd>
 </dl>
@@ -277,9 +277,9 @@ The location of these sass files is indicated in the &quot;main.scss&quot; field
 <dt class="tag-source">Source:</dt>
 <dd class="tag-source"><ul class="dummy">
 <li>
-<a href="https://github.com/thlorenz/sass-resolve/blob/libsass/index.js">index.js</a>
+<a href="https://github.com/thlorenz/sass-resolve/blob/master/index.js">index.js</a>
 <span>, </span>
-<a href="https://github.com/thlorenz/sass-resolve/blob/libsass/index.js#L58">lineno 58</a>
+<a href="https://github.com/thlorenz/sass-resolve/blob/master/index.js#L58">lineno 58</a>
 </li>
 </ul></dd>
 </dl>
@@ -315,9 +315,9 @@ This function is called by <code>imports</code> and exposed as an advanced api i
 <dt class="tag-source">Source:</dt>
 <dd class="tag-source"><ul class="dummy">
 <li>
-<a href="https://github.com/thlorenz/sass-resolve/blob/libsass/index.js">index.js</a>
+<a href="https://github.com/thlorenz/sass-resolve/blob/master/index.js">index.js</a>
 <span>, </span>
-<a href="https://github.com/thlorenz/sass-resolve/blob/libsass/index.js#L86">lineno 86</a>
+<a href="https://github.com/thlorenz/sass-resolve/blob/master/index.js#L86">lineno 86</a>
 </li>
 </ul></dd>
 </dl>
