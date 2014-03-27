@@ -59,7 +59,7 @@ exports = module.exports = function (root, opts, cb) {
  * Resolves paths to all .scss files from the current package and its dependencies.
  * The location of these sass files is indicated in the "main.scss" field inside packags.json.
  * 
- * @name resolveScssFiles
+ * @name sassResolve::resolveScssFiles
  * @function
  * @param root {String} full path to the project whose scss files to resolve
  * @param cb {Function} called back with a list of paths to .scss files or an error if one occurred
@@ -70,7 +70,7 @@ exports.resolveScssFiles = resolveSassPaths;
  * Resolves all paths of all .scss files of this project and its dependencies and 
  * generates the sass imports for them
  * 
- * @name imports
+ * @name sassResolve::imports
  * @function
  * @param root {String} full path to the project whose sass files to resolve
  * @param cb {Function} called back with imports for the .scss files or an error if one occurred
@@ -87,7 +87,7 @@ var imports = exports.imports = function (root, cb) {
  * Creates a .scss import string from the previously resolved sass paths (see: resolveScssFiles)
  * This function is called by `imports` and exposed as an advanced api if more manual tweaking is needed.
  * 
- * @name scssFilesToImports
+ * @name sassResolve::scssFilesToImports
  * @function
  * @param scssFiles {Array} paths to resolved `.scss` files
  * @return {String} of @import statements for each `.scss` file
