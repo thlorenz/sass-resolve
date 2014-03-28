@@ -29,7 +29,7 @@ sassResolve(
 much faster (20x faster on our project) than `Ruby sass`.
 
 If you run into problems and need to use `Ruby sass`, please `npm install sass-resolve@1` and review the [relevant
-docs](https://github.com/thlorenz/sass-resolve/blob/master/README.md) (the API has changed somewhat).
+docs](https://github.com/thlorenz/sass-resolve/blob/v1/README.md) (the API has changed somewhat).
 
 ## API
 
