@@ -17,6 +17,9 @@ function subdir(dir) {
 test('\nresolving sass paths starting in the fixtures main directory', function (t) {
   resolveSassPaths(path.join(__dirname, 'fixtures'),  function (err, res) {
     if (err) return console.error(err);
+
+    inspect(res);
+    return t.end();
     var dirs = res.map(subdir);
 
     t.equal(dirs.length, 4, 'resolves 4 scss files');
@@ -26,6 +29,7 @@ test('\nresolving sass paths starting in the fixtures main directory', function 
       '/sass/index.scss' ].forEach(function (dir) {
         t.ok(~dirs.indexOf(dir), 'resolves ' + dir)
     });
+
     t.end()
   })
 })
