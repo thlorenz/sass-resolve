@@ -18,18 +18,17 @@ test('\nresolving sass paths starting in the fixtures main directory', function 
   resolveSassPaths(path.join(__dirname, 'fixtures'),  function (err, res) {
     if (err) return console.error(err);
 
-    inspect(res);
-    return t.end();
     var dirs = res.map(subdir);
 
     t.equal(dirs.length, 4, 'resolves 4 scss files');
-    [ '/node_modules/foo/sass/index.scss',
-      '/node_modules/foo/node_modules/fooz/sass/index.scss',
-      '/node_modules/bar/node_modules/baz/sass/index.scss',
-      '/sass/index.scss' ].forEach(function (dir) {
-        t.ok(~dirs.indexOf(dir), 'resolves ' + dir)
-    });
-
+    t.deepEqual(
+        dirs
+      , [ '/node_modules/foo/node_modules/fooz/sass/index.scss',
+          '/node_modules/bar/node_modules/baz/sass/index.scss',
+          '/node_modules/foo/sass/index.scss',
+          '/sass/index.scss' ]
+      , 'resolves all paths and orders them correctly so that children come before their parents'
+    )
     t.end()
   })
 })
