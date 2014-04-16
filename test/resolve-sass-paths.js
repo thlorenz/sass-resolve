@@ -15,7 +15,7 @@ function subdir(dir) {
 }
 
 test('\nresolving sass paths starting in the fixtures main directory', function (t) {
-  resolveSassPaths(path.join(__dirname, 'fixtures'),  function (err, res) {
+  resolveSassPaths(fixtures,  function (err, res) {
     if (err) return console.error(err);
 
     var dirs = res.map(subdir);
