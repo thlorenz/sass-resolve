@@ -1,6 +1,6 @@
 # sass-resolve [![build status](https://secure.travis-ci.org/thlorenz/sass-resolve.png?branch=master)](http://travis-ci.org/thlorenz/sass-resolve)
 
-Resolves all sass files in current project and all dependencies to create on sourcemapped css file fromt them. 
+Resolves all sass files in current project and all dependencies to create on sourcemapped css file from them. 
 
 ```js
 var sassResolve =  require('sass-resolve');
